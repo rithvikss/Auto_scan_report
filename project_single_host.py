@@ -43,6 +43,8 @@ def login_check(ip):
             URL_USERNAME= password[0]
             URL_PASSWORD = password[1].rstrip("\n")
             print("login brute force successful \n")
+            print("Credentials are : Username: "+URL_USERNAME+ " Password: "+URL_PASSWORD)
+
             return 0
 
 def create_list_for_crawler(ip):
@@ -62,6 +64,35 @@ def create_list_for_crawler(ip):
             list_for_crawler.append(tbcg_url)
 
     return 0
+
+def show_headers(url):
+    print("Showing headers for " + url+"\n")
+    url_header = requests.get(url, verify=False).headers
+    try:
+        print(url_header['Strict-Transport-Security'])
+    except:
+        print('no HSTS header')
+    try:
+        print(url_header['X-Content-Type-Options'])
+    except:
+        print('no X-Content-Type-Options in header against MIME sniffing')
+    try:
+        print(url_header['X-XSS-Protection'])
+    except:
+        print('no XSS protection header')
+    try:
+        print(url_header['X-Frame-Options'])
+    except:
+        print('no clickjacking protection in header')
+    try:
+        print(url_header['server'])
+    except:
+        print('no Server header')
+    try:
+        print(url_header['X-Content-Security-Policy'])
+    except:
+        print('no CSP header')
+
 
 def crawler():
     n = 0
@@ -220,14 +251,14 @@ def deep_scan():
             print("performing dirbusting\n")
             print(dirbuster_ACLcheck_no_creds(ip_of_device))
             print("trying to find login")
+            show_headers("http://" + ip_of_device + "/")
             if check_for_submit_button(ip_of_device) == 0:
-
                 if login_check(ip_of_device)==0:
                     create_list_for_crawler(ip_of_device)
                     crawler()
-
             print("performing XSS check\n")
             for ele in list_for_crawler:
+                show_headers(ele)
                 if check_for_submit_button_url(ele)==0:
                     if XSS_check(ele) > 0:
                         print("There is a possibility that "+ele + " is vulnerable to XSS")
