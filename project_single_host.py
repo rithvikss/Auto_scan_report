@@ -1,4 +1,5 @@
 #https://github.com/danielmiessler/SecLists/blob/master/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt
+#RithvikSS, #Bajjurir
 import socket
 import multiprocessing
 import time
